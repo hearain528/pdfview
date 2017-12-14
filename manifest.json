@@ -1,0 +1,24 @@
+{
+  "manifest_version": 2,
+  "name": "pdfview",
+  "description": "预览pdf文件",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "options_page": "options.html",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "tabs",
+    "browsingData"
+  ],
+  "content_scripts": [ {
+      "js": [ "pdfjs/build/pdf.js", "options.js" ],
+      "matches": [ "http://*/*", "https://*/*"]
+    }]
+
+}
