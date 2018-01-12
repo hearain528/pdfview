@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta />
+<!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+<title>Node.js Web Server</title>
+</head>
+<body>
+<div id="container">
+   <canvas id="the-canvas"></canvas>
+</div>
+</body>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="pdfjs/build/pdf.js" type="text/javascript"></script>
+<script>
+var container = document.getElementById('container');
+container.style.display = "block";
+//获取当前文档的id
+var id = "";
+var historyPage = 0;
+$(function(){
+    $.get("/getGlobalData",function(result){
+        //result数据添加到box容器中;
+        result = JSON.parse(result);
+        showPdf(result.id, result.currentPage);
+    });
+});
+document.onkeydown=function(event){
+    var e = event || window.event || arguments.callee.caller.arguments[0];
+        if(e && e.keyCode==37 || e.keyCode == 38){ // 按 上和左
+            //要做的事情
+            showPdf(id, 1);
+        }
+        if(e && e.keyCode==39 || e.keyCode == 40){ // 按 下和右
+             //要做的事情
+             showPdf(id, 2);
+        }
+};
+function showPdf(id, page){
+  var url = 'upload/'+ id +'.pdf';
+  PDFJS.workerSrc = 'pdfjs/build/pdf.worker.js';
+  PDFJS.getDocument(url).then(function getPdfHelloWorld(pdf) {
+      pdf.getPage(page).then(function getPageHelloWorld(page) {
+          var scale = 1;
+          var viewport = page.getViewport(scale);
+          var canvas = document.getElementById('the-canvas');
+          var context = canvas.getContext('2d');
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+          var renderContext = {
+              canvasContext: context,
+              viewport: viewport
+          };
+          page.render(renderContext);
+      });
+  });
+}
+</script>
+</html>
