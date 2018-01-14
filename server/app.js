@@ -4,7 +4,7 @@ var multer = require('multer');
 var fs = require('fs');
 var hashmap = require('./core/hashmap');
 var app = express();
-var upload = multer({ dest: 'upload/' });
+var upload = multer({ dest: '/public/upload/' });
 var id = "";
 var currentPage = 1;
 
@@ -32,7 +32,7 @@ app.get('/upload.html', function(req, res){
 
 app.get('/view.html', function(req, res){
     id = "39e1151430ef17fb328945d1174fc3e6";
-    currentPage = 2;
+    currentPage = 1;
     res.sendFile( __dirname + "/" + "view.html" );
 });
 
@@ -49,17 +49,12 @@ app.get('/getGlobalData', function(req, res){
     res.end(JSON.stringify(o));
 });
 
-
-
-
-console.log(result);
-
 //文件上传
 app.post('/file_upload', upload.array('pdf'), function (req, res) {
 
    console.log(req.files[0]);  // 上传的文件信息
 
-   var des_file = __dirname + "/upload/" + req.files[0].filename + "." + req.files[0].fieldname;
+   var des_file = __dirname + "/public/upload/" + req.files[0].filename + "." + req.files[0].fieldname;
    fs.readFile( req.files[0].path, function (err, data) {
         fs.writeFile(des_file, data, function (err) {
          if( err ){
