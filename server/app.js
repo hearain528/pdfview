@@ -30,10 +30,10 @@ app.get('/upload.html', function(req, res){
 });
 
 
-app.get('/view.html', function(req, res){
+app.get('/viewer.html', function(req, res){
     id = "39e1151430ef17fb328945d1174fc3e6";
     currentPage = 1;
-    res.sendFile( __dirname + "/" + "view.html" );
+    res.sendFile( __dirname + "/" + "viewer.html" );
 });
 
 //获取数据
