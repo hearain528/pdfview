@@ -43,7 +43,7 @@ app.get('/index', function (req, res) {
 
 //获取全局数据
 app.get('/getGlobalData', function(req, res){
-    var o = new Object();
+    var o = {};
     o.id = id;
     o.currentPage = currentPage;
     res.end(JSON.stringify(o));
@@ -61,7 +61,7 @@ app.post('/file_upload', upload.array('pdf'), function (req, res) {
               console.log( err );
          }else{
               //保存数据
-              var pdfinfo = new Object();
+              var pdfinfo = {};
               pdfinfo.realname = req.files[0].originalname;
               pdfinfo.idname = req.files[0].filename;
               pdfinfo.size = req.files[0].size;
@@ -77,13 +77,13 @@ app.post('/file_upload', upload.array('pdf'), function (req, res) {
           res.end( JSON.stringify( response ) );
        });
    });
-})
+});
 
 var server = app.listen(8888, function () {
 
-  var host = server.address().address
-  var port = server.address().port
+  var host = server.address().address;
+  var port = server.address().port;
 
-  console.log("应用实例，访问地址为 http://%s:%s", host, port)
+  console.log("应用实例，访问地址为 http://%s:%s", host, port);
 
-})
+});

@@ -10190,7 +10190,7 @@ function webViewerLoad() {
           // console.log(config.toolbar.pageNum);
           // pageNum = result.currentPage;
           // showPdf(result.id, result.currentPage);
-          // console.log(pdfjsWebApp.PDFViewerApplication.setPdfPage(10));
+          console.log(pdfjsWebApp.PDFViewerApplication);
           window.PDFViewerApplication = pdfjsWebApp.PDFViewerApplication;
           pdfjsWebApp.PDFViewerApplication.run(config);
       });
