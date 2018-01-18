@@ -10175,7 +10175,8 @@ function getViewerConfiguration() {
     printContainer: document.getElementById('printContainer'),
     openFileInputName: 'fileInput',
     debuggerScriptPath: './debugger.js',
-    defaultUrl: DEFAULT_URL
+    defaultUrl: DEFAULT_URL,
+    historyPageNum: 1
   };
 }
 function webViewerLoad() {
@@ -10187,12 +10188,13 @@ function webViewerLoad() {
           result = JSON.parse(result);
           var url = 'upload/'+ result.id +'.pdf';
           config.defaultUrl = url;
+          config.historyPageNum = result.currentPage;
           // console.log(config.toolbar.pageNum);
           // pageNum = result.currentPage;
           // showPdf(result.id, result.currentPage);
-          console.log(pdfjsWebApp.PDFViewerApplication);
           window.PDFViewerApplication = pdfjsWebApp.PDFViewerApplication;
           pdfjsWebApp.PDFViewerApplication.run(config);
+          // pdfjsWebApp.PDFViewerApplication.
       });
   });
 }
