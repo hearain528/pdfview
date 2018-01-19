@@ -1463,7 +1463,7 @@ var PDFViewerApplication = {
     this.toolbar.setPagesCount(pdfDocument.numPages, false);
     this.secondaryToolbar.setPagesCount(pdfDocument.numPages);
     var id = this.documentFingerprint = pdfDocument.fingerprint;
-    var store = this.store = new _view_history.ViewHistory(id);
+    var store = this.store = new _view_history.ViewHistory(id, this.appConfig);
     var baseDocumentUrl = void 0;
     baseDocumentUrl = null;
     this.pdfLinkService.setDocument(pdfDocument, baseDocumentUrl);
@@ -9928,7 +9928,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var DEFAULT_VIEW_HISTORY_CACHE_SIZE = 20;
 
 var ViewHistory = function () {
-  function ViewHistory(fingerprint) {
+  function ViewHistory(fingerprint, appConfig) {
     var _this = this;
 
     var cacheSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : DEFAULT_VIEW_HISTORY_CACHE_SIZE;
@@ -9965,32 +9965,38 @@ var ViewHistory = function () {
     key: '_writeToStorage',
     value: function _writeToStorage() {
       var _this2 = this;
-
+      console.log("写入历史记录");
       return new Promise(function (resolve) {
         var databaseStr = JSON.stringify(_this2.database);
         localStorage.setItem('pdfjs.history', databaseStr);
-        resolve();
+        saveHistoryData(databaseStr, function (data) {
+            resolve();
+        });
       });
     }
   }, {
     key: '_readFromStorage',
     value: function _readFromStorage() {
       return new Promise(function (resolve) {
+        console.log("读取历史记录");
         var value = localStorage.getItem('pdfjs.history');
-        if (!value) {
-          var databaseStr = localStorage.getItem('database');
-          if (databaseStr) {
-            try {
-              var database = JSON.parse(databaseStr);
-              if (typeof database.files[0].fingerprint === 'string') {
-                localStorage.setItem('pdfjs.history', databaseStr);
-                localStorage.removeItem('database');
-                value = databaseStr;
-              }
-            } catch (ex) {}
-          }
-        }
-        resolve(value);
+        getHistoryData(function(data){
+            value = data;
+            if (!value) {
+                var databaseStr = localStorage.getItem('database');
+                if (databaseStr) {
+                    try {
+                        var database = JSON.parse(databaseStr);
+                        if (typeof database.files[0].fingerprint === 'string') {
+                            localStorage.setItem('pdfjs.history', databaseStr);
+                            localStorage.removeItem('database');
+                            value = databaseStr;
+                        }
+                    } catch (ex) {}
+                }
+            }
+            resolve(value);
+        });
       });
     }
   }, {
@@ -10174,9 +10180,9 @@ function getViewerConfiguration() {
     },
     printContainer: document.getElementById('printContainer'),
     openFileInputName: 'fileInput',
-    debuggerScriptPath: './debugger.js',
+    debuggerScriptPath: 'pdfjs/web/debugger.js',
     defaultUrl: DEFAULT_URL,
-    historyPageNum: 1
+    historyNum: 1
   };
 }
 function webViewerLoad() {
@@ -10188,13 +10194,13 @@ function webViewerLoad() {
           result = JSON.parse(result);
           var url = 'upload/'+ result.id +'.pdf';
           config.defaultUrl = url;
-          config.historyPageNum = result.currentPage;
+          config.historyNum = result.currentPage;
           // console.log(config.toolbar.pageNum);
           // pageNum = result.currentPage;
           // showPdf(result.id, result.currentPage);
+          // console.log(pdfjsWebApp.PDFViewerApplication);
           window.PDFViewerApplication = pdfjsWebApp.PDFViewerApplication;
           pdfjsWebApp.PDFViewerApplication.run(config);
-          // pdfjsWebApp.PDFViewerApplication.
       });
   });
 }
@@ -10207,3 +10213,4 @@ if (document.readyState === 'interactive' || document.readyState === 'complete')
 /***/ })
 /******/ ]);
 //# sourceMappingURL=viewer.js.map
+

@@ -2,7 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var multer = require('multer');
 var fs = require('fs');
-var hashmap = require('./core/hashmap');
+var hashmap = require('./public/core/hashmap');
 var app = express();
 var upload = multer({ dest: '/public/upload/' });
 var id = "";
@@ -16,7 +16,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 var pdfdata = [];
 var pdfinfo = {currentPage:1, realname:"", idname:"",size:0};
 var data_filename = "data.json";
+var history_filename = "history.json";
 var result = JSON.parse(fs.readFileSync(data_filename));
+var historyData = JSON.parse(fs.readFileSync(history_filename));
 
 //主页访问
 app.get('/index.html', function (req, res) {
@@ -32,7 +34,7 @@ app.get('/upload.html', function(req, res){
 
 app.get('/viewer.html', function(req, res){
     id = "39e1151430ef17fb328945d1174fc3e6";
-    currentPage = 10;
+    currentPage = 100;
     res.sendFile( __dirname + "/" + "viewer.html" );
 });
 
@@ -47,6 +49,19 @@ app.get('/getGlobalData', function(req, res){
     o.id = id;
     o.currentPage = currentPage;
     res.end(JSON.stringify(o));
+});
+
+//保存历史数据
+app.post('/saveHistoryData', function (req, res) {
+    console.log("保存历史数据<br/>" + JSON.stringify(req.body));
+    fs.writeFile(history_filename, JSON.stringify(req.body));
+    res.end();
+});
+
+//读取历史数据
+app.get('/getHistoryData', function (req, res) {
+    console.log("获取历史数据<br/>" + JSON.stringify(historyData));
+    res.end(JSON.stringify(historyData));
 });
 
 //文件上传
