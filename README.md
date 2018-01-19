@@ -7,6 +7,11 @@
 2. 上传功能
 3. 列表功能
 
+> 使用说明：
+1. index.html主要用于列表展示
+2. upload.html主要用于上传文件
+3. viewer.html主要用于阅读pdf文件
+
 ## 用到的技术
 - nodejs(主要用来做服务端)
 - pdfjs,官方文章：pdfjs-1.9.426 http://mozilla.github.io/pdf.js/getting_started/#download
