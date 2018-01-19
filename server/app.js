@@ -16,9 +16,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 var pdfdata = [];
 var pdfinfo = {currentPage:1, realname:"", idname:"",size:0};
 var data_filename = "data.json";
-var history_filename = "history.json";
 var result = JSON.parse(fs.readFileSync(data_filename));
-var historyData = JSON.parse(fs.readFileSync(history_filename));
 
 //主页访问
 app.get('/index.html', function (req, res) {
@@ -33,8 +31,14 @@ app.get('/upload.html', function(req, res){
 
 
 app.get('/viewer.html', function(req, res){
-    id = "39e1151430ef17fb328945d1174fc3e6";
-    currentPage = 100;
+    var requestParam = req.query;
+    id = requestParam.fileid;
+    console.log("请求参数" + JSON.stringify(requestParam));
+    for(var i = 0; i < result.length; i++){
+        if(id == result[i].idname){
+            currentPage = result[i].currentPage;
+        }
+    }
     res.sendFile( __dirname + "/" + "viewer.html" );
 });
 
@@ -53,16 +57,18 @@ app.get('/getGlobalData', function(req, res){
 
 //保存历史数据
 app.post('/saveHistoryData', function (req, res) {
-    console.log("保存历史数据<br/>" + JSON.stringify(req.body));
-    fs.writeFile(history_filename, JSON.stringify(req.body));
+    console.log("保存历史数据\n" + JSON.stringify(req.body));
+    var data = JSON.stringify(req.body);
+    var page = parseInt(JSON.parse(data).data);
+    for(var i = 0; i < result.length; i++){
+        if(id == result[i].idname){
+            result[i].currentPage = page;
+        }
+    }
+    fs.writeFileSync(data_filename, JSON.stringify(result));
     res.end();
 });
 
-//读取历史数据
-app.get('/getHistoryData', function (req, res) {
-    console.log("获取历史数据<br/>" + JSON.stringify(historyData));
-    res.end(JSON.stringify(historyData));
-});
 
 //文件上传
 app.post('/file_upload', upload.array('pdf'), function (req, res) {
