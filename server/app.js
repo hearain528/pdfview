@@ -4,7 +4,7 @@ var multer = require('multer');
 var fs = require('fs');
 var hashmap = require('./public/core/hashmap');
 var app = express();
-var upload = multer({ dest: '/public/upload/' });
+var upload = multer({ dest: './public/upload/' });
 var id = "";
 var currentPage = 1;
 
@@ -26,10 +26,10 @@ app.get('/index.html', function (req, res) {
 
 //上传文件页面
 app.get('/upload.html', function(req, res){
-    res.sendFile( __dirname + "/" + "list.html" );
+    res.sendFile( __dirname + "/" + "upload.html" );
 });
 
-
+//预览文件
 app.get('/viewer.html', function(req, res){
     var requestParam = req.query;
     id = requestParam.fileid;
@@ -40,6 +40,23 @@ app.get('/viewer.html', function(req, res){
         }
     }
     res.sendFile( __dirname + "/" + "viewer.html" );
+});
+
+//删除文件
+app.get('/delete', function(req, res){
+    var requestParam = req.query;
+    var fileid = requestParam.fileid;
+    console.log("请求参数" + JSON.stringify(requestParam));
+    for(var i = 0; i < result.length; i++){
+        if(fileid == result[i].idname){
+            result.splice(i, 1);
+        }
+    }
+    fs.writeFileSync(data_filename, JSON.stringify(result));
+    //删除文件
+    var des_file = __dirname + "/public/upload/" + fileid + ".pdf";
+    fs.unlinkSync(des_file);
+    res.redirect("/index.html");
 });
 
 //获取数据
@@ -93,9 +110,11 @@ app.post('/file_upload', upload.array('pdf'), function (req, res) {
                    message:'File uploaded successfully',
                    filename:req.files[0].originalname
               };
+              //删除临时文件
+              fs.unlinkSync(req.files[0].path);
           }
           console.log( response );
-          res.end( JSON.stringify( response ) );
+          res.redirect("/index.html");
        });
    });
 });
